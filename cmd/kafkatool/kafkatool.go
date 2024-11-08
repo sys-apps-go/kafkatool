@@ -677,6 +677,12 @@ func main() {
 					return nil
 				},
 			},
+			{
+				Action: func(c *cli.Context) error {
+					cli.ShowAppHelp(c)
+					return nil
+				},
+			},
 		},
 	}
 
@@ -687,7 +693,8 @@ func main() {
 		trie.Insert(cmd.Name)
 		correctCommands[cmd.Name] = true
 	}
-	// Check if the first argument is a command or partial command
+
+	// Check if there are any arguments
 	if len(os.Args) > 1 && !strings.HasPrefix(os.Args[1], "-") {
 		cmdArg := os.Args[1]
 
@@ -720,6 +727,11 @@ func main() {
 		}
 	}
 
+	// If no arguments or the first argument is a flag, run the app normally
+	err := app.Run(os.Args)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func connectTLS(brokerAddress, caCertPath string) (net.Conn, error) {
